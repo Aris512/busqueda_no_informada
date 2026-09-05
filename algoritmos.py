@@ -1,3 +1,4 @@
+import time
 from laberinto import Laberinto
 from Interfaz import InterfazLaberinto
 
@@ -15,8 +16,17 @@ def main():
 
 
     #pruebas del bfs, se guardan las posiciones para enviarlas a interfaz.py
+    #se mide su tiempo 
     camino_bfs = []
+    #inicio del tiempo
+    t0_bfs = time.perf_counter()
     longitud = bfs_longitud(laberinto, camino_bfs)
+    t1_bfs = time.perf_counter()
+    tiempo_bfs = t1_bfs - t0_bfs
+    #fin del tiempo
+    #calculo de los nodos 
+    nodos_bfs = longitud if longitud != -1 else 0
+    print("BFS")
     print("Longitud del camino más corto (BFS):", longitud)
     print("Camino encontrado (BFS):", camino_bfs)
 
@@ -25,11 +35,28 @@ def main():
     #pruebas del dfs, se guardan las posiciones para enviarlas a interfaz.py
     copia = [fila[:] for fila in laberinto.matriz]
     camino_dfs = []
-    if dfs_camino(copia, 0, 0, camino_dfs, set(), laberinto.salida):
+     #se mide su tiempo 
+    t0_dfs = time.perf_counter()
+    encontrado_dfs = dfs_camino(copia, 0, 0, camino_dfs, set(), laberinto.salida)
+    t1_dfs = time.perf_counter()
+    tiempo_dfs = t1_dfs - t0_dfs
+    #fin del tiempo
+    #calculo de los nodos 
+    nodos_dfs = len(camino_dfs) - 1 if encontrado_dfs else 0
+    if encontrado_dfs:
         print("Camino encontrado (DFS):", camino_dfs)
-        print("Movimientos (celdas - 1):", len(camino_dfs) - 1)
+        print("Movimientos (celdas - 1):", nodos_dfs)
     else:
         print("DFS: no hay camino disponible.")
+
+    # Tabla comparativa
+    print()
+    print("+------------+------------------+--------------------+")
+    print("| Algoritmo  | Nodos Visitados  | Tiempo Ejecución   |")
+    print("+------------+------------------+--------------------+")
+    print(f"| BFS        | {nodos_bfs:<16} | {tiempo_bfs*1000:>12.4f} ms   |")
+    print(f"| DFS        | {nodos_dfs:<16} | {tiempo_dfs*1000:>12.4f} ms   |")
+    print("+------------+------------------+--------------------+")
 
     # Dibujar caminos en la interfaz
     if camino_bfs:
